@@ -7,7 +7,7 @@ permalink: /humanitec/
 
 ### **How Kubernetes helped one company validate its development direction**
 
-[Repay.me]("https://www.repay.me/), Berlin-based [Humanitec]("https://humanitec.com/"), wanted to explore Kubernetes on Google. With the Otter Networks design sprint as a compass, the enterprise software company began charting a new path. 
+Berlin-based [Humanitec]("https://humanitec.com/"), wanted to explore Kubernetes on Google. With the Otter Networks design sprint as a compass, the enterprise software company began charting a new path. 
 
 When Humanitec CTO Greg Lind approached Otter Networks in July 2018, he had a hunch that Google-specific Kubernetes implementation would help steer his company in the right direction. 
 
