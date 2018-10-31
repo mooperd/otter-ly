@@ -54,67 +54,58 @@ steps:
 #    service: bigmiaou
 
 
-  NamespaceController:
-    title: Determining Namespace State
-    image: codefresh/cf-deploy-kubernetes
-    commands:
-      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
-      - bash -c 'if [ "${{CF_PULL_REQUEST_ACTION}}" == "closed" ]; then kubectl delete namespace ${{CF_BRANCH_TAG_NORMALIZED}}; else if kubectl get namespace ${{CF_BRANCH_TAG_NORMALIZED}}; then exit 0; else kubectl create namespace ${{CF_BRANCH_TAG_NORMALIZED}}; fi ; fi'
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
-          isPRclosed: "'${{CF_PULL_REQUEST_ACTION}}' == 'closed'"
-
-  RunningDeployScript:
-    title: Running Deploy Script
-    type: deploy
-    kind: kubernetes
-    cluster: standard-cluster-1@otters-cc
-    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./deployment.yml
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
-          
-  RunningServiceScript:
-    title: Running Service Script
-    type: service
-    kind: kubernetes
-    cluster: standard-cluster-1@otters-cc
-    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./service.yml
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
-          
-  RunningIngressScript:
-    title: Running Ingress Script
-    type: ingress
-    kind: kubernetes
-    cluster: standard-cluster-1@otters-cc
-    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./ingress.yml
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"        
-#  GetKubernetesServicesEndpoints:
-#    title: Getting Kubernetes Services Endpoints
-#    image: codefresh/cfstep-helm
-#    working_directory: '${{clone_infra_repo}}/k8s'
-#    commands:
-#      - apk update && apk add gettext
-#      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
-#      - BUILD_IMAGE=gcr.io/emilyrmeads-playground/'${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}' TLD=foo.com /bin/bash deploy.sh '${{CF_BRANCH_TAG_NORMALIZED}}'
-
+    #  NamespaceController:
+    #    title: Determining Namespace State
+    #    image: codefresh/cf-deploy-kubernetes
+    #    commands:
+    #      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
+    #      - bash -c 'if [ "${{CF_PULL_REQUEST_ACTION}}" == "closed" ]; then kubectl delete namespace ${{CF_BRANCH_TAG_NORMALIZED}}; else if kubectl get namespace ${{CF_BRANCH_TAG_NORMALIZED}}; then exit 0; else kubectl create namespace ${{CF_BRANCH_TAG_NORMALIZED}}; fi ; fi'
+    #    when:
+    #      condition:
+    #        any:
+    #          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+    #          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+    #          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+    #          isPRclosed: "'${{CF_PULL_REQUEST_ACTION}}' == 'closed'"
+    #
+    #  RunningDeployScript:
+    #    title: Running Deploy Script
+    #    type: deploy
+    #    kind: kubernetes
+    #    cluster: standard-cluster-1@otters-cc
+    #    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+    #    file_path: ./deployment.yml
+    #    when:
+    #      condition:
+    #        any:
+    #          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+    #          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+    #          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
+    #          
+    #  RunningServiceScript:
+    #    title: Running Service Script
+    #    type: service
+    #    kind: kubernetes
+    #    cluster: standard-cluster-1@otters-cc
+    #    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+    #    file_path: ./service.yml
+    #    when:
+    #      condition:
+    #        any:
+    #          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+    #          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+    #          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
+    #          
+    #  RunningIngressScript:
+    #    title: Running Ingress Script
+    #    type: ingress
+    #    kind: kubernetes
+    #    cluster: standard-cluster-1@otters-cc
+    #    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+    #    file_path: ./ingress.yml
+    #    when:
+    #      condition:
+    #        any:
+    #          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+    #          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+    #          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"        
