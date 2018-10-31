@@ -1,18 +1,18 @@
 version: '1.0'
 steps:
 
-  SetVars:
-    description: Freestyle step..
-    title: Free styling
-    environment:
-      - GOOGLE_PROJECT=otters-cc
-    image: alpine:latest
-    commands:
-      - cf_export GOOGLE_PROJECT
-      - cf_export TLD="otterly.cc"
-      - cf_export BUILD_IMAGE="gcr.io/${{GOOGLE_PROJECT}}/${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}" 
-      - cf_export DOCKER_REGISTRY="gcr-io"
-      - env
+#  SetVars:
+#    description: Freestyle step..
+#    title: Free styling
+#    environment:
+#      - GOOGLE_PROJECT=otters-cc
+#    image: alpine:latest
+#    commands:
+#      - cf_export GOOGLE_PROJECT
+#      - cf_export TLD="otterly.cc"
+#      - cf_export BUILD_IMAGE="gcr.io/${{GOOGLE_PROJECT}}/${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}" 
+#      - cf_export DOCKER_REGISTRY="gcr-io"
+#      - env
 
   BuildingDockerImage:
     title: Building Docker Image
