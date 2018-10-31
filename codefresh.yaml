@@ -60,7 +60,7 @@ steps:
     title: Determining Namespace State
     image: codefresh/cf-deploy-kubernetes
     commands:
-      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
+      - kubectl config use-context standard-cluster-1@otters-cc
       - bash -c 'if [ "${{CF_PULL_REQUEST_ACTION}}" == "closed" ]; then kubectl delete namespace ${{CF_BRANCH_TAG_NORMALIZED}}; else if kubectl get namespace ${{CF_BRANCH_TAG_NORMALIZED}}; then exit 0; else kubectl create namespace ${{CF_BRANCH_TAG_NORMALIZED}}; fi ; fi'
     when:
       condition:
