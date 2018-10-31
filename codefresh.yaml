@@ -1,16 +1,16 @@
 version: '1.0'
 steps:
 
-#  SetVars:
-#    description: Freestyle step..
-#    title: Free styling
-#    image: alpine:latest
-#    commands:
-#      - cf_export GOOGLE_PROJECT="otters-cc"
-#      - cf_export TLD="otterly.cc" 
-#      - cf_export BUILD_IMAGE="gcr.io/{{GOOGLE_PROJECT}}/{{CF_REPO_NAME}}:{{CF_SHORT_REVISION}}"
-#      - cf_export DOCKER_REGISTRY="gcr-io"
-#      - env
+  SetVars:
+    description: Freestyle step..
+    title: Free styling
+    image: alpine:latest
+    commands:
+      - cf_export GOOGLE_PROJECT="otters-cc"
+      - cf_export TLD="otterly-cc" 
+      - cf_export BUILD_IMAGE="gcr.io/{{GOOGLE_PROJECT}}/{{CF_REPO_NAME}}:{{CF_SHORT_REVISION}}"
+      - cf_export DOCKER_REGISTRY="gcr-io"
+      - env
 
   BuildingDockerImage:
     title: Building Docker Image
@@ -84,7 +84,7 @@ steps:
           
   RunningServiceScript:
     title: Running Service Script
-    type: service
+    type: deploy
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
@@ -98,7 +98,7 @@ steps:
           
   RunningIngressScript:
     title: Running Ingress Script
-    type: ingress
+    type: deploy
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
