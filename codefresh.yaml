@@ -21,14 +21,14 @@ steps:
     dockerfile: Dockerfile
     
     
-  PushToGCR:
-    type: push
-    title: Pushing Docker image to GCR
-    candidate: '${{BuildingDockerImage}}'
-    tag: '${{CF_SHORT_REVISION}}'
-    image_name: '${{CF_REPO_NAME}}'
-    registry: gcr-io
-    fail_fast: false
+#  PushToGCR:
+#    type: push
+#    title: Pushing Docker image to GCR
+#    candidate: '${{BuildingDockerImage}}'
+#    tag: '${{CF_SHORT_REVISION}}'
+#    image_name: '${{CF_REPO_NAME}}'
+#    registry: gcr-io
+#    fail_fast: false
     
     
 #  clone_infra_repo:
