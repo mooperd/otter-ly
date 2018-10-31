@@ -1,0 +1,120 @@
+version: '1.0'
+steps:
+
+  freestyle-step-1:
+    description: Freestyle step..
+    title: Free styling
+    image: alpine:latest
+    commands:
+      - cf_export GOOGLE_PROJECT="otters-cc"
+      - cf_export TLD="otterly.cc" 
+      - cf_export BUILD_IMAGE="gcr.io/{{GOOGLE_PROJECT}}/{{CF_REPO_NAME}}:{{CF_SHORT_REVISION}}"
+      - cf_export DOCKER_REGISTRY="gcr-io"
+      - env
+
+  BuildingDockerImage:
+    title: Building Docker Image
+    type: build
+    image_name: '${{CF_REPO_NAME}}'
+    working_directory: ./
+    tag: '${{CF_SHORT_REVISION}}'
+    dockerfile: Dockerfile
+    
+    
+  PushToGCR:
+    type: push
+    title: Pushing Docker image to GCR
+    candidate: '${{BuildingDockerImage}}'
+    tag: '${{CF_SHORT_REVISION}}'
+    image_name: '${{CF_REPO_NAME}}'
+    registry: gcr-io
+    fail_fast: false
+    
+    
+  clone_infra_repo:
+    type: git-clone
+    title: Cloning Infra Repository
+#    working_directory: /infra
+    repo: emily.meads/infra
+    git: gitlab
+    # revision: 360cb5f1
+    fail_fast: false
+    
+    
+#  RunningDeployScript:
+#    title: Running Deploy Script
+#    type: deploy
+#    kind: kubernetes
+#    cluster: miaou-example-cluster@emilyrmeads-playground
+#    namespace: bigmiaou-example-namespace
+#    when:
+#      branch:
+#        only:
+#          - master
+#    service: bigmiaou
+
+
+  NamespaceController:
+    title: Determining Namespace State
+    image: codefresh/cf-deploy-kubernetes
+    commands:
+      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
+      - bash -c 'if [ "${{CF_PULL_REQUEST_ACTION}}" == "closed" ]; then kubectl delete namespace ${{CF_BRANCH_TAG_NORMALIZED}}; else if kubectl get namespace ${{CF_BRANCH_TAG_NORMALIZED}}; then exit 0; else kubectl create namespace ${{CF_BRANCH_TAG_NORMALIZED}}; fi ; fi'
+    when:
+      condition:
+        any:
+          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+          isPRclosed: "'${{CF_PULL_REQUEST_ACTION}}' == 'closed'"
+
+  RunningDeployScript:
+    title: Running Deploy Script
+    type: deploy
+    kind: kubernetes
+    cluster: standard-cluster-1@otters-cc
+    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+    file_path: ./deployment.yml
+    when:
+      condition:
+        any:
+          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
+          
+  RunningServiceScript:
+    title: Running Service Script
+    type: service
+    kind: kubernetes
+    cluster: standard-cluster-1@otters-cc
+    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+    file_path: ./service.yml
+    when:
+      condition:
+        any:
+          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
+          
+  RunningIngressScript:
+    title: Running Ingress Script
+    type: ingress
+    kind: kubernetes
+    cluster: standard-cluster-1@otters-cc
+    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+    file_path: ./ingress.yml
+    when:
+      condition:
+        any:
+          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"        
+#  GetKubernetesServicesEndpoints:
+#    title: Getting Kubernetes Services Endpoints
+#    image: codefresh/cfstep-helm
+#    working_directory: '${{clone_infra_repo}}/k8s'
+#    commands:
+#      - apk update && apk add gettext
+#      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
+#      - BUILD_IMAGE=gcr.io/emilyrmeads-playground/'${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}' TLD=foo.com /bin/bash deploy.sh '${{CF_BRANCH_TAG_NORMALIZED}}'
+
