@@ -10,11 +10,11 @@ spec:
   replicas: 1
   revisionHistoryLimit: 5
   template:
-#    metadata:
-#      name: {{CF_REPO_NAME}}
-#      labels:
-#        app: {{CF_REPO_NAME}}
-#        tier: web
+    metadata:
+      name: {{CF_REPO_NAME}}
+      labels:
+        app: {{CF_REPO_NAME}}
+        tier: web
     spec:
 #      affinity:
         # This makes sure that we have one pod running per node.
