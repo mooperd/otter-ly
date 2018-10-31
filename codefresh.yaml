@@ -7,7 +7,7 @@ steps:
     image: alpine:latest
     commands:
       - cf_export GOOGLE_PROJECT="otters-cc"
-      - cf_export TLD="otterly.cc"
+      - cf_export TLD="otterly-cc"
       - cf_export BUILD_IMAGE="gcr.io/${{GOOGLE_PROJECT}}/${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}" 
       - cf_export DOCKER_REGISTRY="gcr-io"
       - env
