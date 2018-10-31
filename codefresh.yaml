@@ -76,7 +76,7 @@ steps:
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./deployment.yml
+    file_path: ./k8s/deployment.yml
     when:
       condition:
         any:
@@ -90,7 +90,7 @@ steps:
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./service.yml
+    file_path: ./k8s/service.yml
     when:
       condition:
         any:
@@ -104,7 +104,7 @@ steps:
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./ingress.yml
+    file_path: ./k8s/ingress.yml
     when:
       condition:
         any:
