@@ -14,6 +14,26 @@ steps:
       - cf_export DOCKER_REGISTRY="gcr-io"
       - env
 
+  NotifyGitHubPREnvCreating:
+    title: Set Pull Request Environment pending
+    image: cloudposse/github-status-updater
+    environment:
+      - GITHUB_ACTION=update_state
+      - GITHUB_TOKEN=${{GITHUB_TOKEN}}
+      - GITHUB_OWNER=${{CF_REPO_OWNER}}
+      - GITHUB_REPO=${{CF_REPO_NAME}}
+      - GITHUB_REF=${{CF_REVISION}}
+      - GITHUB_CONTEXT=Pull Request Environment
+      - GITHUB_STATE=pending
+      - GITHUB_DESCRIPTION=Creating Pull Request Environment
+      - GITHUB_TARGET_URL=https://g.codefresh.io/helm/releases/standard-cluster-1@otters-cc/kube-system/${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_PULL_REQUEST_NUMBER}}-${{CF_REPO_NAME}}/services
+    when:
+      condition:
+        any:
+          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+
   BuildingDockerImage:
     title: Building Docker Image
     type: build
@@ -111,12 +131,4 @@ steps:
           isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
           isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
           isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"        
-#  GetKubernetesServicesEndpoints:
-#    title: Getting Kubernetes Services Endpoints
-#    image: codefresh/cfstep-helm
-#    working_directory: '${{clone_infra_repo}}/k8s'
-#    commands:
-#      - apk update && apk add gettext
-#      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
-#      - BUILD_IMAGE=gcr.io/emilyrmeads-playground/'${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}' TLD=foo.com /bin/bash deploy.sh '${{CF_BRANCH_TAG_NORMALIZED}}'
 
