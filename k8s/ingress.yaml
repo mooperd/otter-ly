@@ -15,7 +15,7 @@ items:
 #      - $HOSTNAME
 #      secretName: wildcard-brickblock-cloud-io
     rules:
-    - host: {{CF_BRANCH_TAG_NORMALIZED}}.{{TLD}}
+    - host: {{HOST}}
       http:
         paths:
         - backend:
