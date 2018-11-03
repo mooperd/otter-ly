@@ -5,8 +5,8 @@ steps:
     description: Freestyle step..
     title: Free styling
     environment:
-      - GOOGLE_PROJECT="otters-cc"
-      - TLD="otterly.cc"
+      - GOOGLE_PROJECT=otters-cc
+      - TLD=otterly.cc
     image: alpine:latest
     commands:
       - cf_export GOOGLE_PROJECT
@@ -15,12 +15,12 @@ steps:
       - cf_export HOST="${{CF_BRANCH_TAG_NORMALIZED}}.${{CF_REPO_NAME}}.${{TLD}}"
       - env
 
-#  SeeThenVars:
-#    description: Freestyle step..
-#    title: Free stylin them var
-#    image: alpine:latest
-#    commands:
-#      - env
+  SeeThemVars:
+    description: Freestyle step..
+    title: Free stylin them var
+    image: alpine:latest
+    commands:
+      - env
 
   BuildingDockerImage:
     title: Building Docker Image
