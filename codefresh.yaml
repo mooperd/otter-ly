@@ -27,12 +27,12 @@ steps:
       - GITHUB_STATE=success
       - GITHUB_DESCRIPTION=Creating Pull Request Environment
       - GITHUB_TARGET_URL=https://g.codefresh.io/helm/releases/standard-cluster-1@otters-cc/kube-system/${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_PULL_REQUEST_NUMBER}}-${{CF_REPO_NAME}}/services
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
 
   NotifySlackChannelPR:
     title: Sending Slack Notification for Pull Request Environment
@@ -55,12 +55,12 @@ steps:
       - SLACK_FIELD2_TITLE=Version
       - SLACK_FIELD2_VALUE=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}
       - SLACK_FIELD2_SHORT=true
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
 
   BuildingDockerImage:
     title: Building Docker Image
