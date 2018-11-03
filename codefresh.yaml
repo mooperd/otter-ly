@@ -15,7 +15,7 @@ steps:
       - cf_export HOST="${{CF_BRANCH_TAG_NORMALIZED}}.${{CF_REPO_NAME}}.${{TLD}}"
       - env
 
-  SetVars:
+  SeeVars:
     description: Freestyle step..
     title: Free styling
     image: alpine:latest
