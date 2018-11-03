@@ -34,7 +34,7 @@ steps:
       - GITHUB_CONTEXT=Pull Request Environment
       - GITHUB_STATE=success
       - GITHUB_DESCRIPTION=Creating Pull Request Environment
-      - GITHUB_TARGET_URL=${{HOST}}
+      - GITHUB_TARGET_URL=http://${{HOST}}
 #    when:
 #      condition:
 #        any:
