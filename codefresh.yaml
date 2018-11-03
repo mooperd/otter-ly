@@ -6,13 +6,20 @@ steps:
     title: Free styling
     environment:
       - GOOGLE_PROJECT=otters-cc
-      - TLD="otterly.cc"
+      - TLD=otterly.cc
     image: alpine:latest
     commands:
+      - env
       - cf_export GOOGLE_PROJECT
-      - cf_export DOCKER_REGISTRY="gcr-io"
-      - cf_export BUILD_IMAGE="gcr.io/{{GOOGLE_PROJECT}}/{{CF_REPO_NAME}}:{{CF_SHORT_REVISION}}"
-      - cf_export HOST={{CF_BRANCH_TAG_NORMALIZED}}.{{CF_REPO_NAME}}.{{TLD}}
+      - cf_export TLD
+      - cf_export BUILD_IMAGE="gcr.io/$GOOGLE_PROJECT/${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}"
+      - cf_export HOST="${{CF_BRANCH_TAG_NORMALIZED}}.${{CF_REPO_NAME}}.$TLD"
+
+  SeeThemVars:
+    description: Freestyle step..
+    title: Free stylin them var
+    image: alpine:latest
+    commands:
       - env
 
   NotifyGitHubPREnvCreating:
@@ -27,7 +34,7 @@ steps:
       - GITHUB_CONTEXT=Pull Request Environment
       - GITHUB_STATE=success
       - GITHUB_DESCRIPTION=Creating Pull Request Environment
-      - GITHUB_TARGET_URL=https://g.codefresh.io/helm/releases/standard-cluster-1@otters-cc/kube-system/${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_PULL_REQUEST_NUMBER}}-${{CF_REPO_NAME}}/services
+      - GITHUB_TARGET_URL=${{HOST}}
 #    when:
 #      condition:
 #        any:
@@ -41,7 +48,7 @@ steps:
     environment:
       - SLACK_WEBHOOK_URL=https://hooks.slack.com/services/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
       - SLACK_USER_NAME=Codefresh
-      - "SLACK_ICON_EMOJI=:poop:"
+      - SLACK_ICON_EMOJI=":poop:"
       - SLACK_TITLE=Pull Request Environment Deployed for ${{CF_BRANCH}}
       - SLACK_TITLE_LINK=https://g.codefresh.io/helm/releases/sales-demo@FirstKubernetes/kube-system/${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_PULL_REQUEST_NUMBER}}-${{CF_REPO_NAME}}/services
       - SLACK_FOOTER_ICON=https://pbs.twimg.com/profile_images/859843681553178624/AHcBc6EG_400x400.jpg
