@@ -123,7 +123,7 @@ steps:
     type: deploy
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
-#    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
     file_path: ./k8s/namespace.yaml
 
   RunningDeployScript:
