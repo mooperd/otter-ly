@@ -15,13 +15,12 @@ steps:
       - cf_export HOST="${{CF_BRANCH_TAG_NORMALIZED}}.${{CF_REPO_NAME}}.${{TLD}}"
       - env
 
-#  SeeVars:
-#    description: Freestyle step..
-#    title: Free styling
-#    environment:
-#    image: alpine:latest
-#    commands:
-#      - env
+  SetVars:
+    description: Freestyle step..
+    title: Free styling
+    image: alpine:latest
+    commands:
+      - env
 
   BuildingDockerImage:
     title: Building Docker Image
