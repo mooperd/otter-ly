@@ -9,11 +9,11 @@ steps:
       - TLD=otterly.cc
     image: alpine:latest
     commands:
+      - env
       - cf_export GOOGLE_PROJECT
       - cf_export TLD
       - cf_export BUILD_IMAGE="gcr.io/$GOOGLE_PROJECT/${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}"
       - cf_export HOST="${{CF_BRANCH_TAG_NORMALIZED}}.${{CF_REPO_NAME}}.$TLD"
-      - env
 
   SeeThemVars:
     description: Freestyle step..
