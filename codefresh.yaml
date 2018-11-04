@@ -141,7 +141,7 @@ steps:
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
     file_path: ./k8s/deployment.yaml
-#    timeout: 300
+    timeout: '300'
 #    when:
 #      condition:
 #        any:
