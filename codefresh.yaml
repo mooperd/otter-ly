@@ -22,6 +22,54 @@ steps:
     commands:
       - env
 
+  NotifyGitHubPREnvCreating:
+    title: Set Pull Request Environment pending
+    image: cloudposse/github-status-updater
+    environment:
+      - GITHUB_ACTION=update_state
+      - GITHUB_TOKEN=${{GITHUB_TOKEN}}
+      - GITHUB_OWNER=${{CF_REPO_OWNER}}
+      - GITHUB_REPO=${{CF_REPO_NAME}}
+      - GITHUB_REF=${{CF_REVISION}}
+      - GITHUB_CONTEXT=Pull Request Environment
+      - GITHUB_STATE=success
+      - GITHUB_DESCRIPTION=Creating Pull Request Environment
+      - GITHUB_TARGET_URL=http://${{HOST}}
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+
+  NotifySlackChannelPR:
+    title: Sending Slack Notification for Pull Request Environment
+    image: cloudposse/slack-notifier
+    environment:
+      - SLACK_WEBHOOK_URL=https://hooks.slack.com/services/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
+      - SLACK_USER_NAME=Codefresh
+      - SLACK_ICON_EMOJI=":poop:"
+      - SLACK_TITLE=Pull Request Environment Deployed for ${{CF_BRANCH}}
+      - SLACK_TITLE_LINK=https://g.codefresh.io/helm/releases/sales-demo@FirstKubernetes/kube-system/${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_PULL_REQUEST_NUMBER}}-${{CF_REPO_NAME}}/services
+      - SLACK_FOOTER_ICON=https://pbs.twimg.com/profile_images/859843681553178624/AHcBc6EG_400x400.jpg
+      - SLACK_THUMB_URL=https://pbs.twimg.com/profile_images/699752011428810753/ayRqrKW1_400x400.png
+      - SLACK_FOOTER=Helm Deploy of example-voting-app
+      - SLACK_AUTHOR_NAME=${{CF_BUILD_ID}}
+      - SLACK_AUTHOR_LINK=${{CF_BUILD_URL}}
+      - SLACK_AUTHOR_ICON=https://github.com/${{CF_BUILD_INITIATOR}}.png
+      - SLACK_FIELD1_TITLE=Environment
+      - SLACK_FIELD1_VALUE=Pull Request
+      - SLACK_FIELD1_SHORT=true
+      - SLACK_FIELD2_TITLE=Version
+      - SLACK_FIELD2_VALUE=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}
+      - SLACK_FIELD2_SHORT=true
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+
   BuildingDockerImage:
     title: Building Docker Image
     type: build
@@ -64,67 +112,82 @@ steps:
 #    service: bigmiaou
 
 
-  NamespaceController:
-    title: Determining Namespace State
-    image: codefresh/cf-deploy-kubernetes
-    commands:
-      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
-      - bash -c 'if [ "${{CF_PULL_REQUEST_ACTION}}" == "closed" ]; then kubectl delete namespace ${{CF_BRANCH_TAG_NORMALIZED}}; else if kubectl get namespace ${{CF_BRANCH_TAG_NORMALIZED}}; then exit 0; else kubectl create namespace ${{CF_BRANCH_TAG_NORMALIZED}}; fi ; fi'
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
-          isPRclosed: "'${{CF_PULL_REQUEST_ACTION}}' == 'closed'"
+#  NamespaceController:
+#    title: Determining Namespace State
+#    image: codefresh/cf-deploy-kubernetes
+#    commands:
+#      - kubectl config use-context standard-cluster-1@otters-cc
+#      - bash -c 'if [ "${{CF_PULL_REQUEST_ACTION}}" == "closed" ]; then kubectl delete namespace ${{CF_BRANCH_TAG_NORMALIZED}}; else if kubectl get namespace ${{CF_BRANCH_TAG_NORMALIZED}}; then exit 0; else kubectl create namespace ${{CF_BRANCH_TAG_NORMALIZED}}; fi ; fi'
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+#          isPRclosed: "'${{CF_PULL_REQUEST_ACTION}}' == 'closed'"
+
+  RunningNamespaceScript:
+    title: Running Namespace
+    type: deploy
+    kind: kubernetes
+    cluster: standard-cluster-1@otters-cc
+    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+    file_path: ./k8s/namespace.yaml
 
   RunningDeployScript:
-    title: Running Deploy Script
+    title: Running Deployment
     type: deploy
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./deployment.yml
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
+    file_path: ./k8s/deployment.yaml
+    timeout: '300'
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"
+
+#  RunningDeployScript:
+#    title: Running Deploy Script
+#    type: deploy
+#    kind: kubernetes
+#    cluster: standard-cluster-1@otters-cc
+#    namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
+#    file_path: ./k8s/deployment.yaml
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
           
   RunningServiceScript:
-    title: Running Service Script
+    title: Running Service
     type: deploy
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./service.yml
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
+    file_path: ./k8s/service.yaml
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"       
           
   RunningIngressScript:
-    title: Running Ingress Script
+    title: Running Ingress
     type: deploy
     kind: kubernetes
     cluster: standard-cluster-1@otters-cc
     namespace: ${{CF_BRANCH_TAG_NORMALIZED}}
-    file_path: ./ingress.yml
-    when:
-      condition:
-        any:
-          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
-          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
-          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"        
-#  GetKubernetesServicesEndpoints:
-#    title: Getting Kubernetes Services Endpoints
-#    image: codefresh/cfstep-helm
-#    working_directory: '${{clone_infra_repo}}/k8s'
-#    commands:
-#      - apk update && apk add gettext
-#      - kubectl config use-context miaou-example-cluster@emilyrmeads-playground
-#      - BUILD_IMAGE=gcr.io/emilyrmeads-playground/'${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}' TLD=foo.com /bin/bash deploy.sh '${{CF_BRANCH_TAG_NORMALIZED}}'
+    file_path: ./k8s/ingress.yaml
+#    when:
+#      condition:
+#        any:
+#          isPRopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'opened'"
+#          isPRsynchronized: "'${{CF_PULL_REQUEST_ACTION}}' == 'synchronize'"
+#          isPRreopen: "'${{CF_PULL_REQUEST_ACTION}}' == 'reopened'"        
 
